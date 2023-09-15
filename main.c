@@ -16,9 +16,9 @@
 char usage_string[] = "Usage: reverse [-h] [-i inputfilename] [-o outputfilename]\n";
 
 // child code
-static void processOneItem(FILE* fileHandle, FILE* outFileHandle, int rowArg)
+static void processOneItem(FILE* fileHandle, FILE* outFileHandle)
 {
-
+	printf("%s", "child code called");
 	int numberOfNumbers;
 
 	fscanf(fileHandle, "%d", &numberOfNumbers);
@@ -38,9 +38,10 @@ static void processOneItem(FILE* fileHandle, FILE* outFileHandle, int rowArg)
 		printf("%d", reversedRow[i]);
 	}
 	fprintf(outFileHandle, "\n");
-	fclose(fileHandle);
-	fclose(outFileHandle);
-	exit(EXIT_SUCCESS);
+//	fclose(fileHandle);
+//	fclose(outFileHandle);
+//	exit(EXIT_SUCCESS);
+//	_exit(1);
 }
 
 int main(int argc, char *argv[]) {
@@ -87,8 +88,12 @@ int main(int argc, char *argv[]) {
 
 	int numberOfSets = 0;
 	fscanf(inputFileHandle, "%d", &numberOfSets);
-//	printf("%d", numberOfSets);i
-	
+	printf("%d", numberOfSets);
+
+//	int stat = 0;
+//	pid_t childPid = fork();	
+
+	int parentPid = 0;
 
 	for (int i=0; i<numberOfSets; i++)
 	{
@@ -97,15 +102,19 @@ int main(int argc, char *argv[]) {
 		if(childPid == 0)
 		{
 			printf("%s", "Calling process one item\n");
-			processOneItem(inputFileHandle, outputFileHandle, i);
-			exit(EXIT_SUCCESS);		
+			processOneItem(inputFileHandle, outputFileHandle);
 		}
 		else
 		{
+			printf("parent PID %d", getpid());
 			printf("%s", "Calling wait\n");
 			childPid = wait(&stat);
-			printf("parent PID %d", getpid());
+	//		printf("parent PID %d", getpid());
+			_exit(1);
 		}
 	}	
+//	fprintf(outputFileHandle, "%d", parentPid);
+//	printf("parent PID test %d", parentPid);
+
 	return 0;
 }
